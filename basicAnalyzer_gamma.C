@@ -1,7 +1,10 @@
 
-int basicAnalyzer_gamma(int argc, char** argv) {
+int basicAnalyzer_gamma_onefile(int fNum) {
 
-  TFile infile(argv[1]);
+  std::stringstream instream;
+  instream<<"/pnfs/iihe/cms/store/user/asahasra/SingletTripletHDMToDisplacedL_M200deltaM20ctau3cm_TuneCP5_14TeV-madgraph-pythia8/STHDM_M200dM20ctau3cm_Run3Winter2021MC_crabRunSkim2_asahasra/210615_101538/0000/scoutingNTuple_"<<fNum<<".root";
+  std::string filename = instream.str();
+  TFile infile(filename.c_str());
   TTreeReader tree("mmtree/tree",&infile);
   TTreeReaderValue<UInt_t> n_genpart(tree,"n_genpart");
   TTreeReaderValue<std::vector<int>> genpart_pdg(tree,"genpart_pdg");
@@ -27,7 +30,10 @@ int basicAnalyzer_gamma(int argc, char** argv) {
   TTreeReaderValue<std::vector<float>> ele_mhits(tree,"Electron_mHits");
   TTreeReaderValue<std::vector<float>> ele_ooEMOop(tree,"Electron_ooEMOop");
 
-  TFile* outfile = new TFile("hists_ele.root","RECREATE");
+  std::stringstream outstream;
+  outstream<<"hists_ele_STHDM3cm_"<<fNum<<".root";
+  std::string outfilename = outstream.str();
+  TFile* outfile = new TFile(outfilename.c_str(),"RECREATE");
   TH1F* gen_elen = new TH1F("gen_elen","gen_elen",10,0,10);
   TH1F* gen_elept = new TH1F("gen_elept","gen_elept",1000,0,1000);
   TH1F* gen_eleeta = new TH1F("gen_eleeta","gen_eleeta",108,-2.7,2.7);
@@ -473,5 +479,15 @@ int basicAnalyzer_gamma(int argc, char** argv) {
   outfile->Write();
   outfile->Close();
   tree.Delete();
+  return -1;
+}
+
+int basicAnalyzer_gamma() {
+
+  for(int i = 1; i<=21; i++) {
+    if(i==16) continue;
+    basicAnalyzer_gamma_onefile(i);
+  }
+
   return -1;
 }
