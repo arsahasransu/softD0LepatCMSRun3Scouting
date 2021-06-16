@@ -482,11 +482,11 @@ int basicAnalyzer_elec_onefile(int fNum) {
   return -1;
 }
 
-int basicAnalyzer_gamma() {
+int basicAnalyzer_elec() {
 
   for(int i = 1; i<=21; i++) {
     if(i==16) continue;
-    basicAnalyzer_gamma_onefile(i);
+    basicAnalyzer_elec_onefile(i);
   }
 
   return -1;

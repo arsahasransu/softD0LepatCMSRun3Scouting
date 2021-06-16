@@ -3,9 +3,13 @@
 // Cut 2 - n trk layer with measurement > 5
 // Cut 3 - Cut 1 and cut 2
 
-int basicAnalyzer_mu() {
+int basicAnalyzer_mu_onefile(int fNum) {
 
-  TFile infile("./data/ARTree_tuple4.root");
+  std::stringstream instream;
+  //instream<<"/pnfs/iihe/cms/store/user/asahasra/SingletTripletHDMToDisplacedL_M200deltaM20ctau3cm_TuneCP5_14TeV-madgraph-pythia8/STHDM_M200dM20ctau3cm_Run3Winter2021MC_crabRunSkim2_asahasra/210615_101538/0000/scoutingNTuple_"<<fNum<<".root";
+  instream<<"/pnfs/iihe/cms/store/user/asahasra/SingletTripletHDMToDisplacedL_M200deltaM20ctau30cm_TuneCP5_14TeV-madgraph-pythia8/STHDM_M200dM20ctau30cm_Run3Winter2021MC_crabRunSkim2_asahasra/210615_101821/0000/scoutingNTuple_"<<fNum<<".root";
+  std::string filename = instream.str();
+  TFile infile(filename.c_str());
   TTreeReader tree("mmtree/tree",&infile);
   TTreeReaderValue<UInt_t> n_genpart(tree,"n_genpart");
   TTreeReaderValue<std::vector<int>> genpart_pdg(tree,"genpart_pdg");
@@ -53,7 +57,11 @@ int basicAnalyzer_mu() {
   TTreeReaderValue<std::vector<float>> jet_eta(tree,"Jet_eta");
   TTreeReaderValue<std::vector<float>> jet_phi(tree,"Jet_phi");
 
-  TFile* outfile = new TFile("hists.root","RECREATE");
+  std::stringstream outstream;
+  //outstream<<"hists_mu_STHDM3cm_"<<fNum<<".root";
+  outstream<<"hists_mu_STHDM30cm_"<<fNum<<".root";
+  std::string outfilename = outstream.str();
+  TFile* outfile = new TFile(outfilename.c_str(),"RECREATE");
   TH1F* gen_mun = new TH1F("gen_mun","gen_mun",10,0,10);
   TH1F* gen_mupt = new TH1F("gen_mupt","gen_mupt",1000,0,1000);
   TH1F* gen_mueta = new TH1F("gen_mueta","gen_mueta",100,-2.5,2.5);
@@ -887,5 +895,15 @@ int basicAnalyzer_mu() {
   outfile->Write();
   outfile->Close();
   tree.Delete();
+  return -1;
+}
+
+int basicAnalyzer_mu() {
+
+  for(int i = 1; i<=17; i++) {
+    //if(i==16) continue;
+    basicAnalyzer_mu_onefile(i);
+  }
+
   return -1;
 }
